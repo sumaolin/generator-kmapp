@@ -22,17 +22,10 @@ module.exports = generators.Base.extend({
       type: Boolean
     });
 
-    // setup the test-framework property, Gruntfile template will need this
     this.option('test-framework', {
       desc: 'Test framework to be invoked',
       type: String,
       defaults: 'mocha'
-    });
-
-    this.option('babel', {
-      desc: 'Use Babel',
-      type: Boolean,
-      defaults: true
     });
 
     if (this.options['test-framework'] === 'mocha') {
@@ -51,14 +44,14 @@ module.exports = generators.Base.extend({
   },
 
   initializing: function () {
-    this.pkg = require('../package.json');
+    this.pkg = require('../../package.json');
   },
 
-  askFor: function () {
+  prompting: function () {
     var done = this.async();
 
     if (!this.options['skip-welcome-message']) {
-      this.log(yosay('\'Allo \'allo! Out of the box I include HTML5 Boilerplate, jQuery, and a Gruntfile to build your app.'));
+      this.log(yosay('\'Allo \'allo! Out of the box I include HTML5 Boilerplate, jQuery, and a gulpfile to build your app.'));
     }
 
     var prompts = [{
@@ -93,8 +86,10 @@ module.exports = generators.Base.extend({
 
       function hasFeature(feat) {
         return features && features.indexOf(feat) !== -1;
-      }
+      };
 
+      // manually deal with the response, get back and store the results.
+      // we change a bit this way of doing to automatically do this in the self.prompt() method.
       this.includeSass = hasFeature('includeSass');
       this.includeBootstrap = hasFeature('includeBootstrap');
       this.includeModernizr = hasFeature('includeModernizr');
@@ -105,17 +100,17 @@ module.exports = generators.Base.extend({
   },
 
   writing: {
-    gruntfile: function () {
+    gulpfile: function () {
       this.fs.copyTpl(
-        this.templatePath('Gruntfile.js'),
-        this.destinationPath('Gruntfile.js'),
+        this.templatePath('gulpfile.babel.js'),
+        this.destinationPath('gulpfile.babel.js'),
         {
-          pkg: this.pkg,
+          date: (new Date).toISOString().split('T')[0],
+          name: this.pkg.name,
+          version: this.pkg.version,
           includeSass: this.includeSass,
           includeBootstrap: this.includeBootstrap,
-          includeModernizr: this.includeModernizr,
-          testFramework: this.options['test-framework'],
-          useBabel: this.options['babel']
+          testFramework: this.options['test-framework']
         }
       );
     },
@@ -125,25 +120,19 @@ module.exports = generators.Base.extend({
         this.templatePath('_package.json'),
         this.destinationPath('package.json'),
         {
-          includeSass: this.includeSass,
-          includeModernizr: this.includeModernizr,
-          includeJQuery: this.includeBootstrap || this.includeJQuery,
-          testFramework: this.options['test-framework'],
-          useBabel: this.options['babel']
+          includeSass: this.includeSass
         }
-      )
+      );
     },
 
     git: function () {
       this.fs.copy(
         this.templatePath('gitignore'),
-        this.destinationPath('.gitignore')
-      );
+        this.destinationPath('.gitignore'));
 
       this.fs.copy(
         this.templatePath('gitattributes'),
-        this.destinationPath('.gitattributes')
-      );
+        this.destinationPath('.gitattributes'));
     },
 
     bower: function () {
@@ -179,11 +168,11 @@ module.exports = generators.Base.extend({
           };
         }
       } else if (this.includeJQuery) {
-        bowerJson.dependencies['jquery'] = '~2.1.4';
+        bowerJson.dependencies['jquery'] = '~2.1.1';
       }
 
       if (this.includeModernizr) {
-        bowerJson.dependencies['modernizr'] = '~2.8.3';
+        bowerJson.dependencies['modernizr'] = '~2.8.1';
       }
 
       this.fs.writeJSON('bower.json', bowerJson);
@@ -200,29 +189,49 @@ module.exports = generators.Base.extend({
       );
     },
 
-    scripts: function () {
+    h5bp: function () {
       this.fs.copy(
-        this.templatePath('main.js'),
-        this.destinationPath('app/scripts/index.js')
+        this.templatePath('favicon.ico'),
+        this.destinationPath('app/favicon.ico')
       );
+
+      this.fs.copy(
+        this.templatePath('apple-touch-icon.png'),
+        this.destinationPath('app/apple-touch-icon.png')
+      );
+
+      this.fs.copy(
+        this.templatePath('robots.txt'),
+        this.destinationPath('app/robots.txt'));
     },
 
     styles: function () {
-      var stylesheet;
+      var css = 'main';
 
       if (this.includeSass) {
-        stylesheet = 'main.scss';
+        css += '.scss';
       } else {
-        stylesheet = 'main.css';
+        css += '.css';
       }
 
       this.fs.copyTpl(
-        this.templatePath(stylesheet),
-        this.destinationPath('app/styles/' + stylesheet),
+        this.templatePath(css),
+        this.destinationPath('app/assets/styles/' + css),
         {
           includeBootstrap: this.includeBootstrap
         }
-      )
+      );
+    },
+
+    scripts: function () {
+      this.fs.copy(
+        this.templatePath('main.js'),
+        this.destinationPath('app/assets/scripts/main.js')
+      );
+      this.fs.copy(
+        this.templatePath('setFont.js'),
+        this.destinationPath('app/assets/scripts/setFont.js')
+      );
     },
 
     html: function () {
@@ -230,10 +239,12 @@ module.exports = generators.Base.extend({
 
       // path prefix for Bootstrap JS files
       if (this.includeBootstrap) {
+        bsPath = '/app/bower_components/';
+
         if (this.includeSass) {
-          bsPath = '/bower_components/bootstrap-sass/assets/javascripts/bootstrap/';
+          bsPath += 'bootstrap-sass/assets/javascripts/bootstrap/';
         } else {
-          bsPath = '/bower_components/bootstrap/js/';
+          bsPath += 'bootstrap/js/';
         }
       }
 
@@ -245,6 +256,7 @@ module.exports = generators.Base.extend({
           includeSass: this.includeSass,
           includeBootstrap: this.includeBootstrap,
           includeModernizr: this.includeModernizr,
+          includeJQuery: this.includeJQuery,
           bsPath: bsPath,
           bsPlugins: [
             'affix',
@@ -264,35 +276,16 @@ module.exports = generators.Base.extend({
       );
     },
 
-    icons: function () {
-      this.fs.copy(
-        this.templatePath('favicon.ico'),
-        this.destinationPath('app/favicon.ico')
-      );
-
-      this.fs.copy(
-        this.templatePath('apple-touch-icon.png'),
-        this.destinationPath('app/apple-touch-icon.png')
-      );
-    },
-
-    robots: function () {
-      this.fs.copy(
-        this.templatePath('robots.txt'),
-        this.destinationPath('app/robots.txt')
-      );
-    },
-
     misc: function () {
-      mkdirp('app/images');
-      mkdirp('app/fonts');
+      mkdirp('app/assets/images');
+      mkdirp('app/assets/fonts');
     }
   },
 
   install: function () {
     this.installDependencies({
-      skipInstall: this.options['skip-install'],
-      skipMessage: this.options['skip-install-message']
+      skipMessage: this.options['skip-install-message'],
+      skipInstall: this.options['skip-install']
     });
   },
 
@@ -303,7 +296,7 @@ module.exports = generators.Base.extend({
       chalk.yellow.bold('npm install & bower install') +
       ', inject your' +
       '\nfront end dependencies by running ' +
-      chalk.yellow.bold('grunt wiredep') +
+      chalk.yellow.bold('gulp wiredep') +
       '.';
 
     if (this.options['skip-install']) {
@@ -314,17 +307,19 @@ module.exports = generators.Base.extend({
     // wire Bower packages to .html
     wiredep({
       bowerJson: bowerJson,
-      src: 'app/index.html',
-      exclude: ['bootstrap.js'],
-      ignorePath: /^(\.\.\/)*\.\./
+      directory: 'app/bower_components',
+      exclude: ['bootstrap-sass', 'bootstrap.js'],
+      ignorePath: /^(\.\.\/)*\.\./,
+      src: 'app/index.html'
     });
 
     if (this.includeSass) {
       // wire Bower packages to .scss
       wiredep({
         bowerJson: bowerJson,
-        src: 'app/styles/*.scss',
-        ignorePath: /^(\.\.\/)+/
+        directory: 'app/bower_components',
+        ignorePath: /^(\.\.\/)+/,
+        src: 'app/assets/sass/*.scss'
       });
     }
   }
