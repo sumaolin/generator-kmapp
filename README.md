@@ -14,14 +14,14 @@
 ### 首要的当然是官方文档了，怎么写自己的 generator
 
    1. [WRITING YOUR OWN YEOMAN GENERATOR](http://yeoman.io/authoring/index.html)
-   
+
 ### 英语渣，相关的国内文档
-   
+
    1. [yeoman - 搭建自己的脚手架 - 1](http://segmentfault.com/a/1190000002629851)
    2. [yeoman - 搭建自己的脚手架 - 2](http://segmentfault.com/a/1190000002630463)
    3. [yeoman - 搭建自己的脚手架 - 3 - 弃坑](http://segmentfault.com/a/1190000002630997)
-   
-   4. [自定义Yeoman生成器 ](1.md) 自己整理了下
+
+   4. [自定义Yeoman生成器 ](https://github.com/sumaolin/generator-kmapp/blob/master/readme/1.md) 自己整理了下
 
 ## Getting Started
 ## 开始介绍怎么使用
