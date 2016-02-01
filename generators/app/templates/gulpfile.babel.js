@@ -5,22 +5,20 @@ import browserSync from 'browser-sync';
 import del from 'del';
 import {stream as wiredep} from 'wiredep';
 import merge from 'merge-stream';
+import fontSpider from 'gulp-font-spider';
+import proxyMiddleware from 'http-proxy-middleware';
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
-//编译sass
+//编译less
 //注意：任务只处理less文件，如需处理css文件请自行修改。
 gulp.task('styles', () => {
-  return gulp.src('app/assets/styles/*.scss')
+  return gulp.src('app/assets/styles/*.less')
     .pipe($.plumber())
     // .pipe($.sourcemaps.init())
-    .pipe($.sass.sync({
-      outputStyle: 'expanded',
-      precision: 10,
-      includePaths: ['.']
-    }).on('error', $.sass.logError))
-    .pipe($.autoprefixer({browsers: ['last 1 version']}))
+    .pipe($.less())
+    .pipe($.autoprefixer({browsers: ['> 5%']}))
     .pipe(gulp.dest('.tmp/assets/styles'));
 });
 
@@ -30,7 +28,7 @@ gulp.task('html', ['styles'], () => {
 
   return gulp.src('.tmp/*.html')
     .pipe(assets)
-    .pipe($.if('*.js', $.uglify()))
+    // .pipe($.if('*.js', $.uglify()))
     .pipe($.if('*.css', $.minifyCss({compatibility: '*'})))
     .pipe(assets.restore())
     .pipe($.useref())
@@ -54,12 +52,8 @@ gulp.task('sprite', () => {
   var cssStream = spriteData.css
     .pipe($.replace(/(\d+)px/g, '$1/24rem'))
     .pipe($.plumber())
-    .pipe($.sass.sync({
-      outputStyle: 'expanded',
-      precision: 10,
-      includePaths: ['.']
-    }).on('error', $.sass.logError))
-    // .pipe($.sass())
+    .pipe($.less())
+    // .pipe($.less())
     .pipe(gulp.dest('.tmp/assets/styles'));
 
   return merge(imgStream, cssStream);
@@ -131,14 +125,26 @@ gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
 //运行测试代码
 gulp.task('serve', ['wiredep-include', 'sprite', 'styles', 'fonts'], () => {
+  // gulp.start('fontspider');
+
+  var proxy = proxyMiddleware('/api', {
+    target: 'http://sh.act.qq.com',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/api' : '/anchor/anchor'      // rewrite paths
+    },
+  });
+
   browserSync({
     notify: false,
+    open: 'external',
     port: 9000,
     server: {
       baseDir: ['.tmp', 'app'],
       routes: {
         '/bower_components': 'bower_components'
-      }
+      },
+      middleware: [proxy]
     }
   });
 
@@ -152,7 +158,7 @@ gulp.task('serve', ['wiredep-include', 'sprite', 'styles', 'fonts'], () => {
 
   gulp.watch('app/*.html', ['wiredep-include']);
   gulp.watch('app/assets/images/sprite/*', ['sprite']);
-  gulp.watch('app/assets/styles/**/*.scss', ['styles']);
+  gulp.watch('app/assets/styles/**/*.less', ['styles']);
   gulp.watch('app/assets/fonts/**/*', ['fonts']);
   gulp.watch('bower.json', ['wiredep-include', 'fonts']);
 });
