@@ -47,7 +47,7 @@ module.exports = generators.Base.extend({
     this.pkg = require('../../package.json');
   },
 
-  prompting: function () {
+  _prompting: function () {
     var done = this.async();
 
     if (!this.options['skip-welcome-message']) {
@@ -125,7 +125,7 @@ module.exports = generators.Base.extend({
       );
     },
 
-    git: function () {
+    _git: function () {
       this.fs.copy(
         this.templatePath('gitignore'),
         this.destinationPath('.gitignore'));
@@ -142,39 +142,7 @@ module.exports = generators.Base.extend({
         dependencies: {}
       };
 
-      if (this.includeBootstrap) {
-        if (this.includeSass) {
-          bowerJson.dependencies['bootstrap-sass'] = '~3.3.5';
-          bowerJson.overrides = {
-            'bootstrap-sass': {
-              'main': [
-                'assets/stylesheets/_bootstrap.scss',
-                'assets/fonts/bootstrap/*',
-                'assets/javascripts/bootstrap.js'
-              ]
-            }
-          };
-        } else {
-          bowerJson.dependencies['bootstrap'] = '~3.3.5';
-          bowerJson.overrides = {
-            'bootstrap': {
-              'main': [
-                'less/bootstrap.less',
-                'dist/css/bootstrap.css',
-                'dist/js/bootstrap.js',
-                'dist/fonts/*'
-              ]
-            }
-          };
-        }
-      } else if (this.includeJQuery) {
-        bowerJson.dependencies['jquery'] = '~2.1.1';
-      }
-
-      if (this.includeModernizr) {
-        bowerJson.dependencies['modernizr'] = '~2.8.1';
-      }
-
+      bowerJson.dependencies['jquery'] = '~2.1.1';
       this.fs.writeJSON('bower.json', bowerJson);
       this.fs.copy(
         this.templatePath('bowerrc'),
@@ -182,14 +150,14 @@ module.exports = generators.Base.extend({
       );
     },
 
-    editorConfig: function () {
+    _editorConfig: function () {
       this.fs.copy(
         this.templatePath('editorconfig'),
         this.destinationPath('.editorconfig')
       );
     },
 
-    h5bp: function () {
+    _h5bp: function () {
       this.fs.copy(
         this.templatePath('favicon.ico'),
         this.destinationPath('app/favicon.ico')
@@ -206,20 +174,14 @@ module.exports = generators.Base.extend({
     },
 
     styles: function () {
-      var css = 'main';
-
-      if (this.includeSass) {
-        css += '.scss';
-      } else {
-        css += '.css';
-      }
+      var main = 'main.less';
+      var reset = 'reset.less';
 
       this.fs.copyTpl(
-        this.templatePath(css),
-        this.destinationPath('app/assets/styles/' + css),
-        {
-          includeBootstrap: this.includeBootstrap
-        }
+        this.templatePath(reset),
+        this.destinationPath('app/assets/styles/' + reset),
+        this.templatePath(main),
+        this.destinationPath('app/assets/styles/' + main)
       );
     },
 
