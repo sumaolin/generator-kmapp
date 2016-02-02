@@ -8,95 +8,13 @@ var _s = require('underscore.string');
 
 module.exports = generators.Base.extend({
   constructor: function () {
-    var testLocal;
 
     generators.Base.apply(this, arguments);
 
-    this.option('skip-welcome-message', {
-      desc: 'Skips the welcome message',
-      type: Boolean
-    });
-
-    this.option('skip-install-message', {
-      desc: 'Skips the message after the installation of dependencies',
-      type: Boolean
-    });
-
-    this.option('test-framework', {
-      desc: 'Test framework to be invoked',
-      type: String,
-      defaults: 'mocha'
-    });
-
-    if (this.options['test-framework'] === 'mocha') {
-      testLocal = require.resolve('generator-mocha/generators/app/index.js');
-    } else if (this.options['test-framework'] === 'jasmine') {
-      testLocal = require.resolve('generator-jasmine/generators/app/index.js');
-    }
-
-    this.composeWith(this.options['test-framework'] + ':app', {
-      options: {
-        'skip-install': this.options['skip-install']
-      }
-    }, {
-      local: testLocal
-    });
   },
 
   initializing: function () {
     this.pkg = require('../../package.json');
-  },
-
-  _prompting: function () {
-    var done = this.async();
-
-    if (!this.options['skip-welcome-message']) {
-      this.log(yosay('\'Allo \'allo! Out of the box I include HTML5 Boilerplate, jQuery, and a gulpfile to build your app.'));
-    }
-
-    var prompts = [{
-      type: 'checkbox',
-      name: 'features',
-      message: 'What more would you like?',
-      choices: [{
-        name: 'Sass',
-        value: 'includeSass',
-        checked: true
-      }, {
-        name: 'Bootstrap',
-        value: 'includeBootstrap',
-        checked: true
-      }, {
-        name: 'Modernizr',
-        value: 'includeModernizr',
-        checked: true
-      }]
-    }, {
-      type: 'confirm',
-      name: 'includeJQuery',
-      message: 'Would you like to include jQuery?',
-      default: true,
-      when: function (answers) {
-        return answers.features.indexOf('includeBootstrap') === -1;
-      }
-    }];
-
-    this.prompt(prompts, function (answers) {
-      var features = answers.features;
-
-      function hasFeature(feat) {
-        return features && features.indexOf(feat) !== -1;
-      };
-
-      // manually deal with the response, get back and store the results.
-      // we change a bit this way of doing to automatically do this in the self.prompt() method.
-      this.includeSass = hasFeature('includeSass');
-      this.includeBootstrap = hasFeature('includeBootstrap');
-      this.includeModernizr = hasFeature('includeModernizr');
-      this.includeJQuery = answers.includeJQuery;
-
-      done();
-    }.bind(this));
   },
 
   writing: {
@@ -107,10 +25,7 @@ module.exports = generators.Base.extend({
         {
           date: (new Date).toISOString().split('T')[0],
           name: this.pkg.name,
-          version: this.pkg.version,
-          includeSass: this.includeSass,
-          includeBootstrap: this.includeBootstrap,
-          testFramework: this.options['test-framework']
+          version: this.pkg.version
         }
       );
     },
@@ -123,16 +38,6 @@ module.exports = generators.Base.extend({
           includeSass: this.includeSass
         }
       );
-    },
-
-    _git: function () {
-      this.fs.copy(
-        this.templatePath('gitignore'),
-        this.destinationPath('.gitignore'));
-
-      this.fs.copy(
-        this.templatePath('gitattributes'),
-        this.destinationPath('.gitattributes'));
     },
 
     bower: function () {
@@ -150,36 +55,16 @@ module.exports = generators.Base.extend({
       );
     },
 
-    _editorConfig: function () {
-      this.fs.copy(
-        this.templatePath('editorconfig'),
-        this.destinationPath('.editorconfig')
-      );
-    },
-
-    _h5bp: function () {
-      this.fs.copy(
-        this.templatePath('favicon.ico'),
-        this.destinationPath('app/favicon.ico')
-      );
-
-      this.fs.copy(
-        this.templatePath('apple-touch-icon.png'),
-        this.destinationPath('app/apple-touch-icon.png')
-      );
-
-      this.fs.copy(
-        this.templatePath('robots.txt'),
-        this.destinationPath('app/robots.txt'));
-    },
-
     styles: function () {
       var main = 'main.less';
       var reset = 'reset.less';
 
       this.fs.copyTpl(
         this.templatePath(reset),
-        this.destinationPath('app/assets/styles/' + reset),
+        this.destinationPath('app/assets/styles/' + reset)
+      );
+
+      this.fs.copyTpl(
         this.templatePath(main),
         this.destinationPath('app/assets/styles/' + main)
       );
@@ -214,26 +99,7 @@ module.exports = generators.Base.extend({
         this.templatePath('index.html'),
         this.destinationPath('app/index.html'),
         {
-          appname: this.appname,
-          includeSass: this.includeSass,
-          includeBootstrap: this.includeBootstrap,
-          includeModernizr: this.includeModernizr,
-          includeJQuery: this.includeJQuery,
-          bsPath: bsPath,
-          bsPlugins: [
-            'affix',
-            'alert',
-            'dropdown',
-            'tooltip',
-            'modal',
-            'transition',
-            'button',
-            'popover',
-            'carousel',
-            'scrollspy',
-            'collapse',
-            'tab'
-          ]
+          appname: this.appname
         }
       );
     },
@@ -270,19 +136,9 @@ module.exports = generators.Base.extend({
     wiredep({
       bowerJson: bowerJson,
       directory: 'app/bower_components',
-      exclude: ['bootstrap-sass', 'bootstrap.js'],
       ignorePath: /^(\.\.\/)*\.\./,
       src: 'app/index.html'
     });
 
-    if (this.includeSass) {
-      // wire Bower packages to .scss
-      wiredep({
-        bowerJson: bowerJson,
-        directory: 'app/bower_components',
-        ignorePath: /^(\.\.\/)+/,
-        src: 'app/assets/sass/*.scss'
-      });
-    }
   }
 });
