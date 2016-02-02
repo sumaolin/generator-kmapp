@@ -15,7 +15,12 @@ const reload = browserSync.reload;
 //注意：任务只处理less文件，如需处理css文件请自行修改。
 gulp.task('styles', () => {
   return gulp.src('app/assets/styles/*.less')
-    .pipe($.plumber())
+    .pipe($.plumber({
+      errorHandler: function (err) {
+          console.log(err);
+          this.emit('end');
+      }
+    }))
     // .pipe($.sourcemaps.init())
     .pipe($.less())
     .pipe($.autoprefixer({browsers: ['> 5%']}))
