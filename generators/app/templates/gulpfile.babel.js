@@ -7,6 +7,7 @@ import {stream as wiredep} from 'wiredep';
 import merge from 'merge-stream';
 import fontSpider from 'gulp-font-spider';
 import proxyMiddleware from 'http-proxy-middleware';
+import cleanCSS from 'gulp-clean-css';
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -33,8 +34,13 @@ gulp.task('html', ['styles'], () => {
 
   return gulp.src('.tmp/*.html')
     .pipe(assets)
-    // .pipe($.if('*.js', $.uglify()))
-    .pipe($.if('*.css', $.minifyCss({compatibility: '*'})))
+    .pipe($.if('*.js', $.uglify()))
+    .pipe($.if('*.css', cleanCSS({
+      advanced: false,//类型：Boolean 默认：true [是否开启高级优化（合并选择器等）]
+      compatibility: '*',//保留ie7及以下兼容写法 类型：String 默认：''or'*' [启用兼容模式； 'ie7'：IE7兼容模式，'ie8'：IE8兼容模式，'*'：IE9+兼容模式]
+      keepBreaks: false,//类型：Boolean 默认：false [是否保留换行]
+      keepSpecialComments: '*' //保留所有特殊前缀 当你用autoprefixer生成的浏览器前缀，如果不加这个参数，有可能将会删除你的部分前缀
+    })))
     .pipe(assets.restore())
     .pipe($.useref())
     // .pipe($.if('*.html', $.minifyHtml({conditionals: true, loose: true})))
@@ -133,10 +139,10 @@ gulp.task('serve', ['wiredep-include', 'sprite', 'styles', 'fonts'], () => {
   // gulp.start('fontspider');
 
   var proxy = proxyMiddleware('/api', {
-    target: 'http://sh.act.qq.com',
+    target: 'http://yogurt.kmapp.cn',
     changeOrigin: true,
     pathRewrite: {
-        '^/api' : '/anchor/anchor'      // rewrite paths
+        '^/api' : '/scrm/'      // rewrite paths
     },
   });
 
