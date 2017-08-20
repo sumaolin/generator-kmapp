@@ -82,6 +82,13 @@ module.exports = generators.Base.extend({
       );
     },
 
+    gitignore: function () {
+      this.fs.copy(
+        this.templatePath('gitignore'),
+        this.destinationPath('.gitignore')
+      );
+    },
+
     html: function () {
       var bsPath;
 

@@ -2,10 +2,9 @@
 
 ## Getting Started 开始使用
 
-
-### 1. 安装 `Yeoman` (To install Yeoman from npm, run:)
+### 1. 安装 `Yeoman`, `bower`, `gulp`是环境依赖两种包管理工具，不清楚的自己搜索相关知识 (To install Yeoman from npm, run:)
 ```bash
-npm install -g yo
+npm install -g yo bower gulp
 ```
 
 ### 2. 安装`generator-kmapp` (To install generator-kmapp from npm, run:)
