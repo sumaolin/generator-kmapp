@@ -1,6 +1,6 @@
 # generator-kmapp [![Build Status](https://secure.travis-ci.org/sumaolin/generator-kmapp.png?branch=master)](https://travis-ci.org/sumaolin/generator-kmapp)
 
-## Getting Started 开始使用
+## 开始使用 (Getting Started)
 
 ### 1. 安装 `Yeoman`, `bower`, `gulp`是环境依赖两种包管理工具，不清楚的自己搜索相关知识 (To install Yeoman from npm, run:)
 ```bash
@@ -43,15 +43,15 @@ If you'd like to get to know Yeoman better and meet some of his friends, [gulp](
 ## 深入了解
 
 ### 首要的当然是官方文档了，怎么写自己的 generator
-   1. [WRITING YOUR OWN YEOMAN GENERATOR](http://yeoman.io/authoring/index.html)
+      1. [WRITING YOUR OWN YEOMAN GENERATOR](http://yeoman.io/authoring/index.html)
 
 ### 英语渣，相关的国内文档
-   1. [yeoman - 搭建自己的脚手架 - 1](http://segmentfault.com/a/1190000002629851)
-   2. [yeoman - 搭建自己的脚手架 - 2](http://segmentfault.com/a/1190000002630463)
-   3. [yeoman - 搭建自己的脚手架 - 3 - 弃坑](http://segmentfault.com/a/1190000002630997)
+      1. [yeoman - 搭建自己的脚手架 - 1](http://segmentfault.com/a/1190000002629851)
+      2. [yeoman - 搭建自己的脚手架 - 2](http://segmentfault.com/a/1190000002630463)
+      3. [yeoman - 搭建自己的脚手架 - 3 - 弃坑](http://segmentfault.com/a/1190000002630997)
 
 ### 整理
-   4. [自定义Yeoman生成器 ](https://github.com/sumaolin/generator-kmapp/blob/master/readme/1.md) 自己整理了下
+      4. [自定义Yeoman生成器 ](https://github.com/sumaolin/generator-kmapp/blob/master/readme/1.md) 自己整理了下
 
 ## License
 
