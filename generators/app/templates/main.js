@@ -1,5 +1,0 @@
-(function(window, $){
-
-
-
-})(window, jQuery);
