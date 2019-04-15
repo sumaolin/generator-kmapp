@@ -1,4 +1,10 @@
-# generator-kmapp [![Build Status](https://secure.travis-ci.org/sumaolin/generator-kmapp.png?branch=master)](https://travis-ci.org/sumaolin/generator-kmapp)
+# generator-kmapp 
+
+> base on gulp@3.0. 
+>
+> 基于gulp v 3.0版本的，最近发布的gulp 没做兼容
+
+
 
 ## 开始使用 (Getting Started)
 
