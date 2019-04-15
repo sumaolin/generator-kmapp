@@ -1,133 +1,152 @@
 'use strict';
 var generators = require('yeoman-generator');
-var yosay = require('yosay');
+// var yosay = require('yosay');
 var chalk = require('chalk');
 var wiredep = require('wiredep');
 var mkdirp = require('mkdirp');
 var _s = require('underscore.string');
 
 module.exports = generators.Base.extend({
-  constructor: function () {
+	constructor: function() {
+		generators.Base.apply(this, arguments);
+	},
 
-    generators.Base.apply(this, arguments);
+	initializing: function() {
+		this.pkg = require('../../package.json');
+	},
 
-  },
+	writing: {
+		gulpfile: function() {
+			this.fs.copyTpl(
+				this.templatePath('gulpfile.babel.js'),
+				this.destinationPath('gulpfile.babel.js'),
+				{
+					date: new Date().toISOString().split('T')[0],
+					name: this.pkg.name,
+					version: this.pkg.version
+				}
+			);
+		},
 
-  initializing: function () {
-    this.pkg = require('../../package.json');
-  },
+		packageJSON: function() {
+			this.fs.copyTpl(
+				this.templatePath('_package.json'),
+				this.destinationPath('package.json'),
+				{
+					includeSass: this.includeSass,
+					appname: this.appname
+				}
+			);
+		},
 
-  writing: {
-    gulpfile: function () {
-      this.fs.copyTpl(
-        this.templatePath('gulpfile.babel.js'),
-        this.destinationPath('gulpfile.babel.js'),
-        {
-          date: (new Date).toISOString().split('T')[0],
-          name: this.pkg.name,
-          version: this.pkg.version
-        }
-      );
-    },
+		bower: function() {
+			var bowerJson = {
+				name: _s.slugify(this.appname),
+				private: true,
+				dependencies: {}
+			};
 
-    packageJSON: function () {
-      this.fs.copyTpl(
-        this.templatePath('_package.json'),
-        this.destinationPath('package.json'),
-        {
-          includeSass: this.includeSass,
-          appname: this.appname
-        }
-      );
-    },
+			bowerJson.dependencies['jquery'] = '~2.1.1';
+			this.fs.writeJSON('bower.json', bowerJson);
+			this.fs.copy(
+				this.templatePath('bowerrc'),
+				this.destinationPath('.bowerrc')
+			);
+		},
 
-    bower: function () {
-      var bowerJson = {
-        name: _s.slugify(this.appname),
-        private: true,
-        dependencies: {}
-      };
+		styles: function() {
+			var main = 'main.less';
+			var reset = 'reset.less';
 
-      bowerJson.dependencies['jquery'] = '~2.1.1';
-      this.fs.writeJSON('bower.json', bowerJson);
-      this.fs.copy(
-        this.templatePath('bowerrc'),
-        this.destinationPath('.bowerrc')
-      );
-    },
+			this.fs.copyTpl(
+				this.templatePath(reset),
+				this.destinationPath('app/assets/styles/' + reset)
+			);
 
-    styles: function () {
-      var main = 'main.less';
-      var reset = 'reset.less';
+			this.fs.copyTpl(
+				this.templatePath(main),
+				this.destinationPath('app/assets/styles/' + main)
+			);
+		},
 
-      this.fs.copyTpl(
-        this.templatePath(reset),
-        this.destinationPath('app/assets/styles/' + reset)
-      );
+		scripts: function() {
+			this.fs.copy(
+				this.templatePath('main.js'),
+				this.destinationPath('app/assets/scripts/main.js')
+			);
+			this.fs.copy(
+				this.templatePath('setFont.js'),
+				this.destinationPath('app/assets/scripts/setFont.js')
+			);
+		},
 
-      this.fs.copyTpl(
-        this.templatePath(main),
-        this.destinationPath('app/assets/styles/' + main)
-      );
-    },
+		gitignore: function() {
+			this.fs.copy(
+				this.templatePath('gitignore'),
+				this.destinationPath('.gitignore')
+			);
+		},
 
-    scripts: function () {
-      this.fs.copy(
-        this.templatePath('main.js'),
-        this.destinationPath('app/assets/scripts/main.js')
-      );
-      this.fs.copy(
-        this.templatePath('setFont.js'),
-        this.destinationPath('app/assets/scripts/setFont.js')
-      );
-    },
+		babelSet: function() {
+			this.fs.copy(
+				this.templatePath('.babelrc'),
+				this.destinationPath('.babelrc')
+			);
+		},
 
-    gitignore: function () {
-      this.fs.copy(
-        this.templatePath('gitignore'),
-        this.destinationPath('.gitignore')
-      );
-    },
+		editorConfig: function() {
+			this.fs.copy(
+				this.templatePath('.editorconfig'),
+				this.destinationPath('.editorconfig')
+			);
+		},
+		readMe: function() {
+			this.fs.copy(
+				this.templatePath('README.md'),
+				this.destinationPath('README.md'),
+				{
+					appname: this.appname
+				}
+			);
+		},
 
-    html: function () {
-      var bsPath;
+		html: function() {
+			// var bsPath;
+			// // path prefix for Bootstrap JS files
+			// if (this.includeBootstrap) {
+			// 	bsPath = '/app/bower_components/';
+			// 	if (this.includeSass) {
+			// 		bsPath += 'bootstrap-sass/assets/javascripts/bootstrap/';
+			// 	} else {
+			// 		bsPath += 'bootstrap/js/';
+			// 	}
+			// }
 
-      // path prefix for Bootstrap JS files
-      if (this.includeBootstrap) {
-        bsPath = '/app/bower_components/';
+			this.fs.copyTpl(
+				this.templatePath('index.html'),
+				this.destinationPath('app/index.html'),
+				{
+					appname: this.appname
+				}
+			);
+		},
 
-        if (this.includeSass) {
-          bsPath += 'bootstrap-sass/assets/javascripts/bootstrap/';
-        } else {
-          bsPath += 'bootstrap/js/';
-        }
-      }
+		misc: function() {
+			mkdirp('app/assets/images');
+			mkdirp('app/assets/fonts');
+		}
+	},
 
-      this.fs.copyTpl(
-        this.templatePath('index.html'),
-        this.destinationPath('app/index.html'),
-        {
-          appname: this.appname
-        }
-      );
-    },
+	install: function() {
+		this.installDependencies({
+			skipMessage: this.options['skip-install-message'],
+			skipInstall: this.options['skip-install']
+		});
+	},
 
-    misc: function () {
-      mkdirp('app/assets/images');
-      mkdirp('app/assets/fonts');
-    }
-  },
-
-  install: function () {
-    this.installDependencies({
-      skipMessage: this.options['skip-install-message'],
-      skipInstall: this.options['skip-install']
-    });
-  },
-
-  end: function () {
-    var bowerJson = this.fs.readJSON(this.destinationPath('bower.json'));
-    var howToInstall =
+	end: function() {
+		var bowerJson = this.fs.readJSON(this.destinationPath('bower.json'));
+		var howToInstall =
       '\nAfter running ' +
       chalk.yellow.bold('npm install & bower install') +
       ', inject your' +
@@ -135,18 +154,17 @@ module.exports = generators.Base.extend({
       chalk.yellow.bold('gulp wiredep') +
       '.';
 
-    if (this.options['skip-install']) {
-      this.log(howToInstall);
-      return;
-    }
+		if (this.options['skip-install']) {
+			this.log(howToInstall);
+			return;
+		}
 
-    // wire Bower packages to .html
-    wiredep({
-      bowerJson: bowerJson,
-      directory: 'app/bower_components',
-      ignorePath: /^(\.\.\/)*\.\./,
-      src: 'app/index.html'
-    });
-
-  }
+		// wire Bower packages to .html
+		wiredep({
+			bowerJson: bowerJson,
+			directory: 'app/bower_components',
+			ignorePath: /^(\.\.\/)*\.\./,
+			src: 'app/index.html'
+		});
+	}
 });
