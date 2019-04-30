@@ -7,8 +7,8 @@
   "repository": "sumaolin/generator-kmapp",
   "author": {
     "name": "KevinSu",
-    "email": "sumaolin",
-    "url": "https://github.com/sumaolin"
+    "email": "sumaolin619@qq.com",
+    "url": "http://sumaolin.com/"
   },
   "scripts": {
     "test": "mocha"
@@ -17,7 +17,8 @@
     "generators"
   ],
   "keywords": [
-    "yeoman-generator"
+    "yeoman-generator",
+    "kmapp"
   ],
   "dependencies": {
     "chalk": "^1.0.0",
@@ -31,6 +32,12 @@
     "yosay": "^1.0.0"
   },
   "devDependencies": {
+    "cz-conventional-changelog": "^2.1.0",
     "mocha": "*"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
