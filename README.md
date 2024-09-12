@@ -42,22 +42,22 @@ If you'd like to get to know Yeoman better and meet some of his friends, [gulp](
 
 ## 背景知识
 
-> [前端自动化——快速的移动Web开发模式(Yeoman: generator-gulp-webapp)](https://github.com/xiao-hai/blog/issues/1)
+[前端自动化——快速的移动Web开发模式(Yeoman: generator-gulp-webapp)](https://github.com/xiao-hai/blog/issues/1)
 
 最终想写个自己的generator 统一开发环境，所以有了 generator-kmapp，km 来源公司名称 [孔明科技](http://www.kongming-inc.com/)。
 
 ## 深入了解
 
 ### 首要的当然是官方文档了，怎么写自己的 generator
-      1. [WRITING YOUR OWN YEOMAN GENERATOR](http://yeoman.io/authoring/index.html)
+1. [WRITING YOUR OWN YEOMAN GENERATOR](http://yeoman.io/authoring/index.html)
 
 ### 英语渣，相关的国内文档
-      1. [yeoman - 搭建自己的脚手架 - 1](http://segmentfault.com/a/1190000002629851)
-      2. [yeoman - 搭建自己的脚手架 - 2](http://segmentfault.com/a/1190000002630463)
-      3. [yeoman - 搭建自己的脚手架 - 3 - 弃坑](http://segmentfault.com/a/1190000002630997)
+1. [yeoman - 搭建自己的脚手架 - 1](http://segmentfault.com/a/1190000002629851)
+2. [yeoman - 搭建自己的脚手架 - 2](http://segmentfault.com/a/1190000002630463)
+3. [yeoman - 搭建自己的脚手架 - 3 - 弃坑](http://segmentfault.com/a/1190000002630997)
 
 ### 整理
-      4. [自定义Yeoman生成器 ](https://github.com/sumaolin/generator-kmapp/blob/master/readme/1.md) 自己整理了下
+4. [自定义Yeoman生成器 ](https://github.com/sumaolin/generator-kmapp/blob/master/readme/1.md) 自己整理了下
 
 ## License
 
