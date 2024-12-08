@@ -26,7 +26,7 @@
     "generator-mocha": "^0.2.0",
     "mkdirp": "^0.5.1",
     "underscore.string": "^3.1.1",
-    "wiredep": "^2.2.2",
+    "wiredep": "^4.0.0",
     "yeoman-assert": "^2.0.0",
     "yeoman-generator": "^0.20.1",
     "yosay": "^1.0.0"
